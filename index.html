@@ -1,6 +1,4 @@
-<!doctype html>
-<html lang="es">
-<head>
+<!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Casa de Cambio PDR</title>
@@ -9,59 +7,40 @@
 header{background:#111;color:#fff;padding:22px 18px 18px;position:sticky;top:0;z-index:2}h1{margin:0;font-size:24px}header small{opacity:.7}
 main{max-width:700px;margin:auto;padding:14px 14px 90px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px #0000000d}.label{font-size:13px;color:#666}.value{font-size:25px;font-weight:700;margin-top:5px}
 nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:8px;z-index:3}nav button{border:0;background:none;font-size:12px;color:#555}nav b{display:block;font-size:21px}
-section{display:none}section.active{display:block}h2{font-size:20px;margin:18px 2px 10px}
-form{background:#fff;padding:16px;border-radius:16px;margin-bottom:14px}label{display:block;font-size:13px;color:#555;margin:10px 0 5px}input,select{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size:16px;background:#fff}button.primary{width:100%;padding:14px;border:0;border-radius:11px;background:#111;color:white;font-size:16px;font-weight:600;margin-top:14px}
-button.danger{width:100%;padding:12px;border:1px solid #d33;border-radius:11px;background:#fff;color:#c22;margin-top:12px}
-.row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #eee;padding:12px 0}.row:last-child{border:0}.green{color:#14833b}.red{color:#c33}.muted{color:#777;font-size:12px}
-</style></head>
-<body>
-<header><h1>Casa de Cambio PDR</h1><small>Control de inventario y ganancias</small></header>
-<main>
-<section id="home" class="active">
-<div class="grid">
+section{display:none}section.active{display:block}h2{font-size:20px;margin:18px 2px 10px}form{background:#fff;padding:16px;border-radius:16px;margin-bottom:14px}
+label{display:block;font-size:13px;color:#555;margin:10px 0 5px}input,select{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size:16px;background:#fff}
+button.primary{width:100%;padding:14px;border:0;border-radius:11px;background:#111;color:white;font-size:16px;font-weight:600;margin-top:14px}
+button.danger{padding:9px 12px;border:1px solid #d33;border-radius:9px;background:#fff;color:#c22;font-size:13px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #eee;padding:12px 0}.row:last-child{border:0}
+.green{color:#14833b}.red{color:#c33}.muted{color:#777;font-size:12px}.opmain{flex:1}.confirm{background:#fff8f8;border:1px solid #e7bcbc;border-radius:10px;padding:8px;margin-top:7px;font-size:12px}
+</style></head><body>
+<header><h1>Casa de Cambio PDR</h1><small>Control de inventario y ganancias</small></header><main>
+<section id="home" class="active"><div class="grid">
 <div class="card"><div class="label">Dólares disponibles</div><div class="value" id="usd">US$0.00</div></div>
 <div class="card"><div class="label">Pesos disponibles</div><div class="value" id="dop">RD$0.00</div></div>
 <div class="card"><div class="label">Ganancia total</div><div class="value green" id="profit">RD$0.00</div></div>
-<div class="card"><div class="label">Operaciones</div><div class="value" id="count">0</div></div>
-</div>
-<h2>Agregar dinero al inventario</h2>
-<form id="addForm">
+<div class="card"><div class="label">Operaciones</div><div class="value" id="count">0</div></div></div>
+<h2>Agregar dinero al inventario</h2><form id="addForm">
 <label>Tipo de dinero</label><select id="addType"><option value="usd">Dólares (USD)</option><option value="dop">Pesos (RD$)</option></select>
 <label>Cantidad</label><input id="addAmount" type="number" step="0.01" min="0" required placeholder="Ej. 1000">
 <label>Tasa de costo (solo USD)</label><input id="addRate" type="number" step="0.01" min="0" placeholder="Ej. 59.50">
-<button class="primary">Agregar al inventario</button></form>
-</section>
-<section id="trade">
-<h2>Registrar operación</h2>
-<form id="tradeForm">
+<button class="primary">Agregar al inventario</button></form></section>
+<section id="trade"><h2>Registrar operación</h2><form id="tradeForm">
 <label>Tipo</label><select id="tradeType"><option value="buy">Compra de USD</option><option value="sell">Venta de USD</option></select>
 <label>Dólares</label><input id="tradeUsd" type="number" step="0.01" min="0" required placeholder="Ej. 1000">
 <label>Tasa (RD$ por USD)</label><input id="tradeRate" type="number" step="0.01" min="0" required placeholder="Ej. 59.80">
-<button class="primary">Registrar operación</button></form>
-<div class="card"><b>Cómo calcula</b><p class="muted">En una venta, la ganancia usa el costo promedio de los dólares que tienes en inventario.</p></div>
-</section>
-<section id="history"><h2>Historial</h2><div class="card" id="historyList">No hay operaciones.</div><button class="danger" id="reset">Reiniciar todo</button></section>
-</main>
-<nav><button data-tab="home"><b>🏠</b>Inicio</button><button data-tab="trade"><b>💱</b>Cambio</button><button data-tab="history"><b>📜</b>Historial</button></nav>
+<button class="primary">Registrar operación</button></form><div class="card"><b>Ganancia</b><p class="muted">En una venta se usa el costo promedio de los dólares disponibles en ese momento.</p></div></section>
+<section id="history"><h2>Historial</h2><div class="card" id="historyList">No hay operaciones.</div><button class="danger" style="width:100%;margin-top:12px" id="reset">Reiniciar todo</button></section>
+</main><nav><button data-tab="home"><b>🏠</b>Inicio</button><button data-tab="trade"><b>💱</b>Cambio</button><button data-tab="history"><b>📜</b>Historial</button></nav>
 <script>
-const KEY="pdr_v1";
-let s=JSON.parse(localStorage.getItem(KEY)||'{"usd":0,"dop":0,"cost":0,"profit":0,"ops":[]}');
-function save(){localStorage.setItem(KEY,JSON.stringify(s));render()}
-function money(n,c){return (c==="usd"?"US$":"RD$")+Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
-function render(){
-document.getElementById("usd").textContent=money(s.usd,"usd");document.getElementById("dop").textContent=money(s.dop,"dop");
-document.getElementById("profit").textContent=money(s.profit,"dop");document.getElementById("count").textContent=s.ops.length;
-let h=document.getElementById("historyList"); if(!s.ops.length){h.textContent="No hay operaciones.";return}
-h.innerHTML=s.ops.slice().reverse().map((o,i)=>`<div class="row"><div><b>${o.name}</b><div class="muted">${o.date}</div></div><div style="text-align:right">${money(o.usd,"usd")} × RD$${o.rate.toFixed(2)}<br><span class="${o.profit>=0?'green':'red'}">${o.profit>=0?'+':''}${money(o.profit,'dop')}</span></div></div>`).join("")
-}
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("section").forEach(x=>x.classList.remove("active"));document.getElementById(b.dataset.tab).classList.add("active")});
-document.getElementById("addForm").onsubmit=e=>{e.preventDefault();let t=addType.value,a=+addAmount.value,r=+addRate.value;if(!a)return;
-if(t==="usd"){s.usd+=a;s.cost+=a*(r||0)}else s.dop+=a;
-s.ops.push({name:"Inventario inicial/adición",usd:t==="usd"?a:0,rate:r||0,profit:0,date:new Date().toLocaleString()});e.target.reset();save();alert("Inventario agregado correctamente.")};
-document.getElementById("tradeForm").onsubmit=e=>{e.preventDefault();let type=tradeType.value,u=+tradeUsd.value,r=+tradeRate.value;if(!u||!r)return;
-if(type==="buy"){s.usd+=u;s.dop-=u*r;s.cost+=u*r;if(s.dop<0){s.dop+=u*r;s.usd-=u;s.cost-=u*r;alert("No tienes suficientes pesos para esta compra.");return} s.ops.push({name:"Compra de USD",usd:u,rate:r,profit:0,date:new Date().toLocaleString()})}
-else {if(s.usd<u){alert("No tienes suficientes dólares en inventario.");return}let avg=s.usd?s.cost/s.usd:0, p=u*(r-avg);s.usd-=u;s.dop+=u*r;s.cost-=u*avg;s.profit+=p;s.ops.push({name:"Venta de USD",usd:u,rate:r,profit:p,date:new Date().toLocaleString()})}
-e.target.reset();save();alert("Operación registrada.")};
-document.getElementById("reset").onclick=()=>{if(confirm("¿Borrar inventario e historial completo?")){s={usd:0,dop:0,cost:0,profit:0,ops:[]};save()}};
-render();
+const KEY="pdr_v2";let data=JSON.parse(localStorage.getItem(KEY)||"null");
+function migrate(){const old=JSON.parse(localStorage.getItem("pdr_v1")||"null");if(!old||!Array.isArray(old.ops))return{ops:[]};return{ops:old.ops.map(o=>({type:o.name==="Compra de USD"?"buy":o.name==="Venta de USD"?"sell":(o.usd>0?"add_usd":"add_dop"),usd:+o.usd||0,dop:o.name==="Agregar RD$"?0:(o.usd?0:(+o.dop||0)),rate:+o.rate||0,profit:+o.profit||0,date:o.date||new Date().toLocaleString()}))}}if(!data){data=migrate();localStorage.setItem(KEY,JSON.stringify(data))}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}function money(n,c){return(c==="usd"?"US$":"RD$")+Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function calc(){let usd=0,dop=0,cost=0,profit=0;for(const o of data.ops){let u=+o.usd||0,r=+o.rate||0;if(o.type==="add_usd"){usd+=u;cost+=u*r}else if(o.type==="add_dop"){dop+=+o.dop||0}else if(o.type==="buy"){let t=u*r;if(dop>=t){dop-=t;usd+=u;cost+=t}}else if(o.type==="sell"&&usd>=u){let avg=usd?cost/usd:0,p=u*(r-avg);usd-=u;dop+=u*r;cost-=u*avg;profit+=p;o.profit=p}}return{usd,dop,profit}}
+function render(){let s=calc();document.getElementById("usd").textContent=money(s.usd,"usd");document.getElementById("dop").textContent=money(s.dop,"dop");document.getElementById("profit").textContent=money(s.profit,"dop");document.getElementById("count").textContent=data.ops.length;let h=document.getElementById("historyList");if(!data.ops.length){h.textContent="No hay operaciones.";return}h.innerHTML=data.ops.slice().reverse().map((o,rev)=>{let idx=data.ops.length-1-rev,n=o.type==="buy"?"Compra de USD":o.type==="sell"?"Venta de USD":o.type==="add_usd"?"Agregar USD":"Agregar RD$",detail=o.type==="add_dop"?money(o.dop,"dop"):money(o.usd,"usd")+(o.rate?" × RD$"+o.rate.toFixed(2):""),p=o.type==="sell"?+o.profit||0:0;return '<div class="row" id="op-'+idx+'"><div class="opmain"><b>'+n+'</b><div class="muted">'+o.date+'</div><div>'+detail+'</div>'+(o.type==="sell"?'<span class="'+(p>=0?"green":"red")+'">'+(p>=0?"+":"")+money(p,"dop")+"</span>":"")+'</div><button class="danger" onclick="askDelete('+idx+')">Borrar</button></div>'}).join("")}
+function askDelete(i){let el=document.getElementById("op-"+i);if(el.querySelector(".confirm"))return;let b=document.createElement("div");b.className="confirm";b.innerHTML='¿Borrar esta transacción?<br><b>El inventario y las ganancias se recalcularán.</b><div style="margin-top:7px"><button class="danger" onclick="deleteOp('+i+')">Sí, borrar</button> <button class="danger" onclick="this.parentElement.parentElement.remove()">Cancelar</button></div>';el.querySelector(".opmain").appendChild(b)}
+function deleteOp(i){data.ops.splice(i,1);save();alert("Transacción borrada y saldos recalculados.")}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("section").forEach(x=>x.classList.remove("active"));document.getElementById(b.dataset.tab).classList.add("active");if(b.dataset.tab==="history")render()});
+document.getElementById("addForm").onsubmit=e=>{e.preventDefault();let t=addType.value,a=+addAmount.value,r=+addRate.value;if(!a)return;if(t==="usd")data.ops.push({type:"add_usd",usd:a,rate:r||0,profit:0,date:new Date().toLocaleString()});else data.ops.push({type:"add_dop",usd:0,dop:a,rate:0,profit:0,date:new Date().toLocaleString()});e.target.reset();save();alert("Inventario agregado correctamente.")};
+document.getElementById("tradeForm").onsubmit=e=>{e.preventDefault();let t=tradeType.value,u=+tradeUsd.value,r=+tradeRate.value,s=calc();if(!u||!r)return;if(t==="buy"){if(s.dop<u*r){alert("No tienes suficientes pesos para esta compra.");return}}else if(s.usd<u){alert("No tienes suficientes dólares en inventario.");return}data.ops.push({type:t,usd:u,rate:r,profit:0,date:new Date().toLocaleString()});e.target.reset();save();alert("Operación registrada.")};
+document.getElementById("reset").onclick=()=>{if(confirm("¿Borrar inventario e historial completo? Esta acción no se puede deshacer.")){data={ops:[]};save()}};render();
 </script></body></html>
