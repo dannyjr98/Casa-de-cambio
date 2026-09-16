@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Casa de Cambio DPR</title>
+    <!-- Soporte para Web App de iOS (iPhone) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cambio DPR">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/currency-exchange.png">
+    
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #0dcaf0;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            padding-top: max(15px, env(safe-area-inset-top));
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #1a252f;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .inv-box {
+            background: #eef2f7;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .inv-box.profit-tariff {
+            background: #e8f5e9;
+        }
+
+        .inv-box.profit-rate {
+            background: #e3f2fd;
+        }
+
+        .inv-box h3 {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .inv-box p {
+            margin: 5px 0 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .profit-text {
+            color: #2e7d32 !important;
+        }
+
+        .profit-rate-text {
+            color: #1565c0 !important;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            background: #f1f3f5;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            width: auto;
+            margin: 0;
+            transform: scale(1.2);
+        }
+
+        .fee-preview {
+            font-size: 0.85rem;
+            color: #495057;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .estimator-result {
+            background: #e7f5ff;
+            border-left: 4px solid #1c7ed6;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+        }
+
+        .estimator-result div {
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: #495057;
+        }
+
+        .estimator-result strong {
+            font-size: 1.1rem;
+            color: #1971c2;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-buy { background-color: var(--success); }
+        .btn-sell { background-color: var(--danger); }
+        .btn-danger { background-color: #6c757d; font-size: 0.85rem; padding: 8px; }
+        .btn-delete {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        th, td {
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+            white-space: nowrap;
+        }
+
+        th { background-color: #e9ecef; }
+        .badge-compra { color: var(--success); font-weight: bold; }
+        .badge-venta { color: var(--danger); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>Casa de Cambio DPR</h1>
+
+    <!-- Tarjeta Inventario y Ganancias Reales -->
+    <div class="card">
+        <div class="inventory-grid">
+            <div class="inv-box">
+                <h3>CAJA USD</h3>
+                <p id="caja-usd">$0.00</p>
+            </div>
+            <div class="inv-box">
+                <h3>CAJA LOCAL</h3>
+                <p id="caja-local">$0.00</p>
+            </div>
+            <div class="inv-box profit-tariff">
+                <h3>GANANCIAS POR TARIFA</h3>
+                <p id="ganancias-totales" class="profit-text">$0.00 USD</p>
+            </div>
+            <div class="inv-box profit-rate">
+                <h3>GANANCIAS POR TASA</h3>
+                <p id="ganancias-tasa-totales" class="profit-rate-text">$0.00 Local</p>
+            </div>
+        </div>
+        <button class="btn-danger" style="margin-top: 12px; width: 100%;" onclick="ajustarCaja()">Ajustar / Inicializar Cajas</button>
+    </div>
+
+    <!-- SECCIÓN: Estimador de Ganancias -->
+    <div class="card" style="border: 1px solid #74c0fc;">
+        <h3 class="card-title">Simulador de Ganancia Estimada</h3>
+        
+        <label for="est-monto">Monto USD a Operar:</label>
+        <input type="number" id="est-monto" placeholder="Ej: 1000" step="any" oninput="calcularEstimacion()">
+
+        <div class="grid-2">
+            <div>
+                <label for="est-tasa-compra">Tasa de Compra:</label>
+                <input type="number" id="est-tasa-compra" placeholder="Ej: 58.00" step="any" oninput="calcularEstimacion()">
+            </div>
+            <div>
+                <label for="est-tasa-venta">Tasa de Venta:</label>
+                <input type="number" id="est-tasa-venta" placeholder="Ej: 59.50" step="any" oninput="calcularEstimacion()">
+            </div>
+        </div>
+
+        <label class="checkbox-container">
+            <input type="checkbox" id="est-incluir-tarifa" checked onchange="calcularEstimacion()">
+            <span>Sumar Ganancia por Tarifa (2.5% para &ge; $1000, $10 para &lt; $1000)</span>
+        </label>
+
+        <div class="estimator-result">
+            <div>Diferencia de Tasa (Spread): <span id="res-spread">0.00</span></div>
+            <div>Ganancia Estimada por Tasa: <strong id="res-ganancia-spread" style="color: #2b8a3e;">$0.00 Moneda Local</strong></div>
+            <div>Ganancia por Tarifa: <span id="res-ganancia-tarifa">$0.00 USD</span></div>
+            <hr style="border: 0; border-top: 1px solid #a5d8ff; margin: 8px 0;">
+            <strong>GANANCIA TOTAL ESTIMADA: <br><span id="res-total-estimado" style="color: #0b7285;">$0.00 Moneda Local</span></strong>
+        </div>
+    </div>
+
+    <!-- Formulario de Operación Real -->
+    <div class="card">
+        <h3 class="card-title">Nueva Operación Real</h3>
+        
+        <label for="monto-usd">Monto USD:</label>
+        <input type="number" id="monto-usd" placeholder="Ej: 1000" step="any" oninput="calcularTarifaVistaPrevia()">
+
+        <label for="tasa">Tasa de Cambio Aplicada:</label>
+        <input type="number" id="tasa" placeholder="Ej: 58.00" step="any">
+
+        <label class="checkbox-container">
+            <input type="checkbox" id="aplicar-tarifa" checked onchange="calcularTarifaVistaPrevia()">
+            <span>Cobrar Ganancia por Tarifa</span>
+        </label>
+        <div id="fee-preview" class="fee-preview">Tarifa estimada: $0.00 USD</div>
+
+        <div class="btn-group">
+            <button class="btn-buy" onclick="procesar('COMPRA')">COMPRAR (Entra USD)</button>
+            <button class="btn-sell" onclick="procesar('VENTA')">VENTAR (Sale USD)</button>
+        </div>
+    </div>
+
+    <!-- Historial de Transacciones -->
+    <div class="card">
+        <h3 class="card-title">Historial de Movimientos</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>USD Base</th>
+                        <th>Tarifa</th>
+                        <th>USD Neto</th>
+                        <th>Tasa</th>
+                        <th>Total Local</th>
+                        <th>Ganancia Tasa</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-transacciones">
+                    <!-- Se llena con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let inventario = JSON.parse(localStorage.getItem('dpr_inventario')) || { usd: 1000, local: 500000, gananciasUsd: 0, gananciasTasaLocal: 0 };
+        let transacciones = JSON.parse(localStorage.getItem('dpr_transacciones')) || [];
+
+        if (inventario.gananciasUsd === undefined) inventario.gananciasUsd = 0;
+        if (inventario.gananciasTasaLocal === undefined) inventario.gananciasTasaLocal = 0;
+
+        // Recalcular TODAS las ganancias por tasa directamente al momento de realizar la COMPRA
+        function recalcularGananciasPorTasa() {
+            let acumuladoGananciaLocal = 0;
+
+            // Recopilamos todas las ventas registradas
+            let ventasPendientes = [];
+            transacciones.forEach(t => {
+                if (t.tipo === 'VENTA') {
+                    ventasPendientes.push({ montoUsd: t.montoUsd, tasa: t.tasa });
+                    t.gananciaTasaLocal = 0;
+                } else if (t.tipo === 'COMPRA') {
+                    t.gananciaTasaLocal = 0;
+                }
+            });
+
+            // Recorremos las compras para asignarles su ganancia cuando la tasa de compra es más baja que la venta previa disponible
+            transacciones.forEach(t => {
+                if (t.tipo === 'COMPRA') {
+                    let usdPorCubrir = t.montoUsd;
+                    let gananciaCompra = 0;
+
+                    while (usdPorCubrir > 0 && ventasPendientes.length > 0) {
+                        let venta = ventasPendientes[0];
+                        let montoUsado = Math.min(usdPorCubrir, venta.montoUsd);
+
+                        // Si la tasa de la COMPRA es más baja que la de la VENTA, hay ganancia
+                        if (venta.tasa > t.tasa) {
+                            let diffTasa = venta.tasa - t.tasa;
+                            gananciaCompra += montoUsado * diffTasa;
+                        }
+
+                        usdPorCubrir -= montoUsado;
+                        venta.montoUsd -= montoUsado;
+
+                        if (venta.montoUsd <= 0) {
+                            ventasPendientes.shift();
+                        }
+                    }
+
+                    t.gananciaTasaLocal = gananciaCompra;
+                    acumuladoGananciaLocal += gananciaCompra;
+                }
+            });
+
+            inventario.gananciasTasaLocal = acumuladoGananciaLocal;
+        }
+
+        function calcularEstimacion() {
+            const montoUsd = parseFloat(document.getElementById('est-monto').value);
+            const tasaCompra = parseFloat(document.getElementById('est-tasa-compra').value);
+            const tasaVenta = parseFloat(document.getElementById('est-tasa-venta').value);
+            const incluirTarifa = document.getElementById('est-incluir-tarifa').checked;
+
+            if (isNaN(montoUsd) || montoUsd <= 0 || isNaN(tasaCompra) || isNaN(tasaVenta)) {
+                document.getElementById('res-spread').innerText = "0.00";
+                document.getElementById('res-ganancia-spread').innerText = "$0.00 Moneda Local";
+                document.getElementById('res-ganancia-tarifa').innerText = "$0.00 USD";
+                document.getElementById('res-total-estimado').innerText = "$0.00 Moneda Local";
+                return;
+            }
+
+            const diffTasa = tasaVenta - tasaCompra;
+            const gananciaTasaLocal = montoUsd * diffTasa;
+
+            let tarifaUsd = 0;
+            if (incluirTarifa) {
+                if (montoUsd >= 1000) {
+                    tarifaUsd = montoUsd * 0.025;
+                } else {
+                    tarifaUsd = 10;
+                }
+            }
+
+            const tarifaEnLocal = tarifaUsd * tasaVenta;
+            const gananciaTotalLocal = gananciaTasaLocal + tarifaEnLocal;
+
+            document.getElementById('res-spread').innerText = `${diffTasa > 0 ? '+' : ''}${diffTasa.toFixed(2)}`;
+            document.getElementById('res-ganancia-spread').innerText = `$${gananciaTasaLocal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Moneda Local`;
+            document.getElementById('res-ganancia-tarifa').innerText = `$${tarifaUsd.toFixed(2)} USD (~$${tarifaEnLocal.toLocaleString('en-US', {minimumFractionDigits: 2})} Local)`;
+            document.getElementById('res-total-estimado').innerText = `$${gananciaTotalLocal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Moneda Local`;
+        }
+
+        function calcularTarifaVistaPrevia() {
+            const montoUsd = parseFloat(document.getElementById('monto-usd').value);
+            const aplicar = document.getElementById('aplicar-tarifa').checked;
+            const previewEl = document.getElementById('fee-preview');
+
+            if (!aplicar || isNaN(montoUsd) || montoUsd <= 0) {
+                previewEl.innerText = "Tarifa estimada: $0.00 USD";
+                return;
+            }
+
+            let tarifa = 0;
+            if (montoUsd >= 1000) {
+                tarifa = montoUsd * 0.025;
+                previewEl.innerText = `Tarifa estimada (2.5%): $${tarifa.toFixed(2)} USD`;
+            } else {
+                tarifa = 10;
+                previewEl.innerText = `Tarifa estimada (Fija): $10.00 USD`;
+            }
+        }
+
+        function actualizarUI() {
+            recalcularGananciasPorTasa();
+
+            document.getElementById('caja-usd').innerText = `$${inventario.usd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('caja-local').innerText = `$${inventario.local.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('ganancias-totales').innerText = `$${inventario.gananciasUsd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD`;
+            document.getElementById('ganancias-tasa-totales').innerText = `$${inventario.gananciasTasaLocal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Local`;
+
+            const tbody = document.getElementById('lista-transacciones');
+            tbody.innerHTML = '';
+
+            transacciones.slice().reverse().forEach((t, index) => {
+                const actualIndex = transacciones.length - 1 - index;
+                const tr = document.createElement('tr');
+                const badgeClass = t.tipo === 'COMPRA' ? 'badge-compra' : 'badge-venta';
+                const gananciaTasaTexto = t.tipo === 'COMPRA' ? `$${(t.gananciaTasaLocal || 0).toFixed(2)}` : '-';
+                
+                tr.innerHTML = `
+                    <td class="${badgeClass}">${t.tipo}</td>
+                    <td>$${t.montoUsd.toFixed(2)}</td>
+                    <td>$${(t.tarifaUsd || 0).toFixed(2)}</td>
+                    <td>$${(t.usdEfectivoNeto || t.montoUsd).toFixed(2)}</td>
+                    <td>${t.tasa}</td>
+                    <td>$${t.montoLocal.toFixed(2)}</td>
+                    <td style="color: #2b8a3e; font-weight: bold;">${gananciaTasaTexto}</td>
+                    <td><button class="btn-delete" onclick="borrarTransaccion(${actualIndex})">Borrar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            localStorage.setItem('dpr_inventario', JSON.stringify(inventario));
+            localStorage.setItem('dpr_transacciones', JSON.stringify(transacciones));
+        }
+
+        function procesar(tipo) {
+            const montoUsd = parseFloat(document.getElementById('monto-usd').value);
+            const tasa = parseFloat(document.getElementById('tasa').value);
+            const aplicarTarifa = document.getElementById('aplicar-tarifa').checked;
+
+            if (isNaN(montoUsd) || isNaN(tasa) || montoUsd <= 0 || tasa <= 0) {
+                alert('Por favor ingrese valores válidos.');
+                return;
+            }
+
+            let tarifaUsd = 0;
+            if (aplicarTarifa) {
+                if (montoUsd >= 1000) {
+                    tarifaUsd = montoUsd * 0.025;
+                } else {
+                    tarifaUsd = 10;
+                }
+            }
+
+            const montoLocal = montoUsd * tasa;
+            let usdEfectivoNeto = 0;
+
+            if (tipo === 'COMPRA') {
+                usdEfectivoNeto = montoUsd - tarifaUsd;
+                if (inventario.local < montoLocal) {
+                    alert('No hay suficiente dinero local en caja para realizar la compra.');
+                    return;
+                }
+                inventario.usd += usdEfectivoNeto;
+                inventario.local -= montoLocal;
+            } else if (tipo === 'VENTA') {
+                usdEfectivoNeto = montoUsd + tarifaUsd;
+                if (inventario.usd < montoUsd) {
+                    alert('No hay suficientes dólares en caja para realizar la venta.');
+                    return;
+                }
+                inventario.usd -= montoUsd;
+                inventario.local += montoLocal;
+            }
+
+            inventario.gananciasUsd += tarifaUsd;
+
+            transacciones.push({
+                fecha: new Date().toISOString(),
+                tipo,
+                montoUsd,
+                tarifaUsd,
+                usdEfectivoNeto,
+                tasa,
+                montoLocal,
+                gananciaTasaLocal: 0
+            });
+
+            document.getElementById('monto-usd').value = '';
+            calcularTarifaVistaPrevia();
+
+            actualizarUI();
+        }
+
+        function borrarTransaccion(index) {
+            if (!confirm('¿Estás seguro de que deseas borrar esta transacción? Se revertirán los saldos de la caja y ganancias.')) {
+                return;
+            }
+
+            const t = transacciones[index];
+
+            if (t.tipo === 'COMPRA') {
+                inventario.usd -= (t.usdEfectivoNeto || t.montoUsd);
+                inventario.local += t.montoLocal;
+            } else if (t.tipo === 'VENTA') {
+                inventario.usd += t.montoUsd;
+                inventario.local -= t.montoLocal;
+            }
+
+            inventario.gananciasUsd -= (t.tarifaUsd || 0);
+
+            transacciones.splice(index, 1);
+            actualizarUI();
+        }
+
+        function ajustarCaja() {
+            const nuevoUsd = prompt('Ingrese el saldo real en USD:', inventario.usd);
+            const nuevoLocal = prompt('Ingrese el saldo real en Moneda Local:', inventario.local);
+            const nuevasGananciasTarifa = prompt('Ingrese Ganancias por Tarifa en USD:', inventario.gananciasUsd);
+
+            if (nuevoUsd !== null && nuevoLocal !== null) {
+                inventario.usd = parseFloat(nuevoUsd) || 0;
+                inventario.local = parseFloat(nuevoLocal) || 0;
+                if (nuevasGananciasTarifa !== null) inventario.gananciasUsd = parseFloat(nuevasGananciasTarifa) || 0;
+                actualizarUI();
+            }
+        }
+
+        actualizarUI();
+    </script>
+</body>
+</html>
