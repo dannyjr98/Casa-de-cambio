@@ -488,7 +488,8 @@
             let usdEfectivoNeto = 0;
 
             if (tipo === 'COMPRA') {
-                usdEfectivoNeto = montoUsd - tarifaUsd;
+                // En una compra, la tarifa se suma al USD neto.
+                usdEfectivoNeto = montoUsd + tarifaUsd;
                 if (inventario.local < montoLocal) {
                     alert('No hay suficiente dinero local en caja para realizar la compra.');
                     return;
@@ -496,12 +497,13 @@
                 inventario.usd += usdEfectivoNeto;
                 inventario.local -= montoLocal;
             } else if (tipo === 'VENTA') {
-                usdEfectivoNeto = montoUsd + tarifaUsd;
-                if (inventario.usd < montoUsd) {
+                // En una venta, la tarifa se resta del USD neto.
+                usdEfectivoNeto = montoUsd - tarifaUsd;
+                if (inventario.usd < usdEfectivoNeto) {
                     alert('No hay suficientes dólares en caja para realizar la venta.');
                     return;
                 }
-                inventario.usd -= montoUsd;
+                inventario.usd -= usdEfectivoNeto;
                 inventario.local += montoLocal;
             }
 
@@ -532,10 +534,10 @@
             const t = transacciones[index];
 
             if (t.tipo === 'COMPRA') {
-                inventario.usd -= (t.usdEfectivoNeto || t.montoUsd);
+                inventario.usd -= (t.usdEfectivoNeto ?? t.montoUsd);
                 inventario.local += t.montoLocal;
             } else if (t.tipo === 'VENTA') {
-                inventario.usd += t.montoUsd;
+                inventario.usd += (t.usdEfectivoNeto ?? t.montoUsd);
                 inventario.local -= t.montoLocal;
             }
 
